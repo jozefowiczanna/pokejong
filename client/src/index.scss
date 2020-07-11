@@ -1,6 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,600");
+html {
+  box-sizing: border-box;
+}
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -28,7 +33,6 @@ body {
 }
 
 /* --------- */
-
 
 .grid {
   display: grid;
@@ -68,10 +72,10 @@ body {
 
 .button {
   margin: 10px;
-  
+
   &--big {
     font-size: 22px !important;
-    margin-top: 30px
+    margin-top: 30px;
   }
 
   &-center {
@@ -129,10 +133,8 @@ body {
 
 // ---
 
-
 $dark: #171717;
-$light: #FFFFFF;
-
+$light: #ffffff;
 
 .hamburger {
   position: absolute;
@@ -146,8 +148,9 @@ $light: #FFFFFF;
   margin: 0;
 }
 
-.hamburger, .navigation {
-  transition: transform .3s .1s ease-in-out;
+.hamburger,
+.navigation {
+  transition: transform 0.3s 0.1s ease-in-out;
 }
 
 .hamburger--active {
@@ -170,21 +173,21 @@ $light: #FFFFFF;
 
 .hamburger__inner {
   @include hamburger-line;
-  
+
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  transition: background-color .1s .2s ease-in-out;
+  transition: background-color 0.1s 0.2s ease-in-out;
 }
 
 .hamburger__inner::before,
 .hamburger__inner::after {
   @include hamburger-line;
-  
-  content: '';
+
+  content: "";
   left: 0;
-  transition: transform .2s .2s ease-in-out;
-} 
+  transition: transform 0.2s 0.2s ease-in-out;
+}
 
 .hamburger__inner::before {
   top: -10px;
@@ -227,7 +230,7 @@ $light: #FFFFFF;
 
 .navigation__item {
   margin-bottom: 20px;
-  
+
   a {
     text-decoration: none;
     color: $dark;
