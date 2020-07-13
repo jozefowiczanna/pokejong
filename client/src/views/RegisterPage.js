@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
+import styles from "./styles/RegisterPage.module.scss";
+import cx from "classnames";
 // import jwt_decode from "jwt-decode";
 // import setAuthToken from "../utils/setAuthToken";
 // import axios from "axios";
@@ -44,12 +46,20 @@ class RegisterPage extends Component {
     return (
       <>
         <div className="modal is-active">
-          <div className="modal-background modal-background--secondary"></div>
-          <div className="modal-content modal-content--login">
-            <div className="box-outer">
-              <div className="box box-centered">
-                <h2 className="title is-4"></h2>
-                <form className="form" onSubmit={(e) => this.handleSubmit(e)}>
+          <div
+            className={cx(
+              "modal-background",
+              styles["modal-background--secondary"]
+            )}
+          ></div>
+          <div className={cx("modal-content", styles["modal-content--login"])}>
+            <div className={cx(styles["box-outer"])}>
+              <div className={cx("box", styles["box-centered"])}>
+                <h2 className="title is-4 has-text-centered">Register</h2>
+                <form
+                  className={cx(styles["form"])}
+                  onSubmit={(e) => this.handleSubmit(e)}
+                >
                   <div>
                     {success && (
                       <div className="registered-anim notification is-success has-text-centered">

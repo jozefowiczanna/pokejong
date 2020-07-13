@@ -13,10 +13,19 @@ html {
 
 body {
   margin: 0;
-  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   background-repeat: no-repeat;
   font-family: "Montserrat", sans-serif;
-  height: 100vh;
+  // height: 100vh;
+}
+
+.bodybg {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  z-index: -2;
 }
 
 .container {
@@ -44,17 +53,6 @@ body {
   display: flex;
   position: relative;
 }
-// .square {
-//   background: white;
-//   display: block;
-//   border: 1px solid #ccc;
-//   font-size: 20px;
-//   width: 40px;
-//   height: 40px;
-//   cursor: pointer;
-//   transition: background-color .2s ease-in-out;
-//   position: relative;
-// }
 
 .locked {
   color: #ddd;
@@ -110,8 +108,6 @@ body {
 }
 
 .clock {
-  // display: flex;
-  // justify-content: center;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

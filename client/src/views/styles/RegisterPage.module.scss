@@ -1,0 +1,69 @@
+.modal-background--secondary {
+  background: #0970ad !important;
+}
+
+.box-outer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-inner {
+  width: 100%;
+  max-width: 500px;
+}
+
+.link {
+  font-weight: bold;
+}
+
+.custom-content {
+  max-width: 750px;
+}
+
+.no-border {
+  border: 0;
+}
+
+.modal-content--login {
+  max-height: 100vh !important;
+}
+
+// -----
+// animation
+
+@keyframes show {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.registered-anim {
+  animation-name: show;
+  animation-duration: 200ms; /* or: Xms */
+  animation-iteration-count: 1;
+  animation-direction: alternate; /* or: normal */
+  animation-timing-function: ease-in-out; /* or: ease, ease-in, ease-in-out, linear, cubic-bezier(x1, y1, x2, y2) */
+}
+
+.loading {
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

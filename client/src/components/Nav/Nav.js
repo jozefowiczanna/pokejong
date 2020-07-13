@@ -16,7 +16,7 @@ export default function Nav({ isNavOpen, toggleNav, closeNav }) {
           <span className={styles.hamburgerInner}></span>
         </span>
       </button>
-      <div className={styles.navigationHolder}>
+      <div className={cx(styles.navigationHolder)}>
         <div
           className={cx(styles.navigation, {
             [styles.navigationActive]: isNavOpen,
@@ -24,13 +24,19 @@ export default function Nav({ isNavOpen, toggleNav, closeNav }) {
         >
           <ul className={styles.navigationList}>
             <li className={styles.navigationItem} onClick={closeNav}>
-              <Link to="/">Home</Link>
+              <Link className={styles.navigationLink} to="/">
+                Home
+              </Link>
             </li>
             <li className={styles.navigationItem} onClick={closeNav}>
-              <Link to="/register">Register</Link>
+              <Link className={styles.navigationLink} to="/register">
+                Register
+              </Link>
             </li>
             <li className={styles.navigationItem} onClick={closeNav}>
-              <Link to="/game">Play</Link>
+              <Link className={styles.navigationLink} to="/game">
+                Play
+              </Link>
             </li>
           </ul>
         </div>

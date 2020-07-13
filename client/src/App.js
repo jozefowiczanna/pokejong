@@ -33,6 +33,7 @@ export default class RootPage extends Component {
     const { isNavOpen } = this.state;
     return (
       <Router>
+        <div className="bodybg"></div>
         <Nav toggleNav={toggleNav} closeNav={closeNav} isNavOpen={isNavOpen} />
         <Switch>
           <Route exact path="/" render={(props) => <MainPage {...props} />} />

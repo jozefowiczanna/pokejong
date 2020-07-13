@@ -307,13 +307,6 @@ export default class App extends Component {
     return (
       <div>
         <div>
-          <button className="hamburger">
-            <span className="hamburger__box">
-              <span className="hamburger__inner"></span>
-            </span>
-          </button>
-        </div>
-        <div>
           {false && (
             <Settings
               startGame={this.startGame}
