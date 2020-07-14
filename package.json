@@ -15,11 +15,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
+    "bcryptjs": "^2.4.3",
     "classnames": "^2.2.6",
     "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "is-empty": "^1.2.0",
     "mongoose": "^5.9.22",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "validator": "^13.1.1"
   }
 }

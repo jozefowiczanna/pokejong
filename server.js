@@ -8,6 +8,9 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const routes = require("./routes");
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -18,9 +21,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 mongoose.connection.on("connected", () => {
   console.log("Mongoose is connected");
 });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 // app.use(passport.initialize());
 // require("./config/passport")(passport);

@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import styles from "./styles/RegisterPage.module.scss";
 import cx from "classnames";
+import axios from "axios";
 // import jwt_decode from "jwt-decode";
 // import setAuthToken from "../utils/setAuthToken";
-// import axios from "axios";
 
 class RegisterPage extends Component {
   state = {
     username: "",
     password: "",
     success: false,
-    errors: {},
+    errors: { login: {}, register: {} },
   };
 
   handleSubmit = (e, path) => {
@@ -20,19 +20,22 @@ class RegisterPage extends Component {
       username: this.state.username,
       password: this.state.password,
     };
-    // axios
-    //   .post("/api/user/register", userData)
-    //   .then((res) => {
-    //     this.setState({
-    //       success: true,
-    //     });
-    //     this.props.history.push("/login");
-    //   })
-    //   .catch((err) => {
-    //     this.setState((prevState) => ({
-    //       errors: { login: {}, register: err.response.data },
-    //     }));
-    //   });
+    axios
+      .post("/api/user/register", userData)
+      .then((res) => {
+        console.log(res.data);
+        this.setState({
+          success: true,
+        });
+        // this.props.history.push("/login");
+      })
+      .catch((err) => {
+        console.log("errors");
+        console.log(err.response.data);
+        this.setState((prevState) => ({
+          errors: { login: {}, register: err.response.data },
+        }));
+      });
   };
 
   handleChange = (e) => {
@@ -79,7 +82,9 @@ class RegisterPage extends Component {
                           value={this.state.username}
                         />
                       </div>
-                      <p className="help is-danger">{errors.username}</p>
+                      <p className="help is-danger">
+                        {errors.register.username}
+                      </p>
                     </div>
                     <div className="field">
                       <label className="label">Password</label>
@@ -92,7 +97,9 @@ class RegisterPage extends Component {
                           value={this.state.password}
                         />
                       </div>
-                      <p className="help is-danger">{errors.password}</p>
+                      <p className="help is-danger">
+                        {errors.register.password}
+                      </p>
                     </div>
                   </div>
                   <button className="button is-warning mt-5 mb-5">
