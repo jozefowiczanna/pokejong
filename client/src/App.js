@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import MainPage from "./views/MainPage";
 import RegisterPage from "./views/RegisterPage";
+import LoginPage from "./views/LoginPage";
 import GamePage from "./views/GamePage";
 import Nav from "./components/Nav/Nav";
 
@@ -37,6 +38,11 @@ export default class RootPage extends Component {
         <Nav toggleNav={toggleNav} closeNav={closeNav} isNavOpen={isNavOpen} />
         <Switch>
           <Route exact path="/" render={(props) => <MainPage {...props} />} />
+          <Route
+            exact
+            path="/login"
+            render={(props) => <LoginPage {...props} />}
+          />
           <Route
             exact
             path="/register"

@@ -26,7 +26,12 @@ const user = {
             newUser
               .save()
               .then((user) => res.json(user))
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                console.log(err);
+                return res
+                  .status(500)
+                  .json({ server: "Internal server error" });
+              });
           });
         });
       }
@@ -41,7 +46,7 @@ const user = {
     User.findOne({ username: req.body.username })
       .then((user) => {
         if (!user) {
-          return res.status(400).json("Wrong username");
+          return res.status(400).json({ username: "Wrong username" });
         }
         bcrypt.compare(req.body.password, user.password).then((isMatch) => {
           if (isMatch) {
@@ -58,7 +63,7 @@ const user = {
       })
       .catch((err) => {
         console.log(err);
-        return res.status(500).json("Internal server error");
+        return res.status(500).json({ server: "Internal server error" });
       });
   },
   getAllUsers: (req, res) => {
@@ -66,7 +71,7 @@ const user = {
       .then((users) => res.json(users))
       .catch((err) => {
         console.log(err);
-        return res.status(500).json("Internal server error");
+        return res.status(500).json({ server: "Internal server error" });
       });
   },
 };

@@ -21,7 +21,7 @@ class RegisterPage extends Component {
       password: this.state.password,
     };
     axios
-      .post("/api/user/register", userData)
+      .post("/api/user/login", userData)
       .then((res) => {
         console.log(res.data);
         this.setState({
@@ -60,7 +60,7 @@ class RegisterPage extends Component {
           <div className={cx("modal-content", styles["modal-content--login"])}>
             <div className={cx(styles["box-outer"])}>
               <div className={cx("box", styles["box-centered"])}>
-                <h2 className="title is-4 has-text-centered">Register</h2>
+                <h2 className="title is-4 has-text-centered">Login</h2>
                 <form
                   className={cx(styles["form"])}
                   onSubmit={(e) => this.handleSubmit(e)}
@@ -69,9 +69,9 @@ class RegisterPage extends Component {
                   <div>
                     {success && (
                       <div className="registered-anim notification is-success has-text-centered">
-                        You have successfully registered!
+                        You have successfully logged in!
                         <br />
-                        You can log in!
+                        You can play mahjong!
                       </div>
                     )}
                     <div className="field">
@@ -106,11 +106,11 @@ class RegisterPage extends Component {
                     </div>
                   </div>
                   <button className="button is-warning mt-5 mb-5">
-                    Sign up!
-                  </button>
-                  <div>Already have an account?</div>
-                  <Link className="link" to="/login">
                     Sign in!
+                  </button>
+                  <div>Don't have an account?</div>
+                  <Link className="link" to="/login">
+                    Sign up!
                   </Link>
                 </form>
               </div>
