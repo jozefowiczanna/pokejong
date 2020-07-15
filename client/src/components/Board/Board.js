@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import { shuffle } from "../../utilities/utilities";
+import { shuffle } from "../../utils/utils";
 
 const tileWidth = 60;
 const tileMargin = 1;

@@ -3,7 +3,13 @@ import styles from "./Nav.module.scss";
 import { Link } from "react-router-dom";
 import cx from "classnames";
 
-export default function Nav({ isNavOpen, toggleNav, closeNav }) {
+export default function Nav({
+  isNavOpen,
+  toggleNav,
+  closeNav,
+  userAuthenticated,
+  logoutUser,
+}) {
   return (
     <div>
       <button
@@ -28,11 +34,38 @@ export default function Nav({ isNavOpen, toggleNav, closeNav }) {
                 Home
               </Link>
             </li>
-            <li className={styles.navigationItem} onClick={closeNav}>
-              <Link className={styles.navigationLink} to="/register">
-                Register
-              </Link>
-            </li>
+            {userAuthenticated ? (
+              <>
+                <li className={styles.navigationItem} onClick={closeNav}>
+                  <Link className={styles.navigationLink} to="/account">
+                    Account
+                  </Link>
+                </li>
+                <li
+                  className={styles.navigationItem}
+                  onClick={(e) => {
+                    closeNav();
+                    logoutUser();
+                  }}
+                >
+                  <button className={styles.navigationLinkBtn}>Logout</button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className={styles.navigationItem} onClick={closeNav}>
+                  <Link className={styles.navigationLink} to="/login">
+                    Login
+                  </Link>
+                </li>
+                <li className={styles.navigationItem} onClick={closeNav}>
+                  <Link className={styles.navigationLink} to="/register">
+                    Register
+                  </Link>
+                </li>
+              </>
+            )}
+
             <li className={styles.navigationItem} onClick={closeNav}>
               <Link className={styles.navigationLink} to="/game">
                 Play

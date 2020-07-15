@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
@@ -50,14 +51,28 @@ const user = {
         }
         bcrypt.compare(req.body.password, user.password).then((isMatch) => {
           if (isMatch) {
-            const userData = {
+            const payload = {
               username: user.username,
               userID: user._id,
               createdAt: user.createdAt,
             };
-            return res.json(userData);
+            // return res.json(userData);
+
+            jwt.sign(
+              payload,
+              "secret",
+              {
+                expiresIn: 31556926,
+              },
+              (err, token) => {
+                res.json({
+                  success: true,
+                  token: "Bearer " + token,
+                });
+              }
+            );
           } else {
-            return res.status(400).json({ password: "Wrong password" });
+            return res.status(403).json({ password: "Wrong password" });
           }
         });
       })

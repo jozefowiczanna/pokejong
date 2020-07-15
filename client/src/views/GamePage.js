@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Board from "../components/Board/Board";
-import { shuffle, formatTime } from "../utilities/utilities";
+import { shuffle, formatTime } from "../utils/utils";
 import Settings from "../components/Settings/Settings";
 
 const options = {
@@ -305,7 +305,8 @@ export default class App extends Component {
     const { test } = this.props;
 
     return (
-      <div>
+      <>
+        <div className="bodybg"></div>
         <div>
           {false && (
             <Settings
@@ -356,7 +357,7 @@ export default class App extends Component {
             </>
           )}
         </div>
-      </div>
+      </>
     );
   }
 }
