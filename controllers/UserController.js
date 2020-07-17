@@ -6,7 +6,12 @@ const validateLoginInput = require("../validation/login");
 
 const user = {
   registerUser: (req, res) => {
-    console.log(req.body.username);
+    const username = req.body.username.trim();
+    if (username === "guest" || username === "Guest") {
+      return res.status(400).json({
+        username: `You can't register\u000d \n as a guest.Instead click 'play as a guest' below.`,
+      });
+    }
     const { errors, isValid } = validateRegisterInput(req.body);
     if (!isValid) {
       return res.status(400).json(errors);

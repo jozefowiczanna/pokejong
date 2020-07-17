@@ -76,7 +76,7 @@ export default class RootPage extends Component {
       user: {},
       userAuthenticated: false,
     });
-    window.location.href = "./login";
+    window.location.href = "/login";
   };
 
   render() {
@@ -95,6 +95,12 @@ export default class RootPage extends Component {
       user,
       userAuthenticated,
     };
+
+    const authPageProps = {
+      userAuthenticated,
+      setCurrentUser,
+    };
+
     return (
       <Router>
         <Nav {...navProps} />
@@ -107,16 +113,12 @@ export default class RootPage extends Component {
           <Route
             exact
             path="/login"
-            render={(props) => (
-              <AuthPage {...props} setCurrentUser={setCurrentUser} />
-            )}
+            render={(props) => <AuthPage {...props} {...authPageProps} />}
           />
           <Route
             exact
             path="/register"
-            render={(props) => (
-              <AuthPage {...props} setCurrentUser={setCurrentUser} />
-            )}
+            render={(props) => <AuthPage {...props} {...authPageProps} />}
           />
           <Route
             exact

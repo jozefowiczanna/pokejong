@@ -8,8 +8,14 @@ module.exports = function validateLoginInput(data) {
   if (Validator.isEmpty(data.username)) {
     errors.username = "Username field is required";
   }
+  if (!Validator.matches(data.username, /^[^<>%$\\/";&]*$/)) {
+    errors.username = 'Special characters are not allowed: < > \\ / % $ " ; &';
+  }
   if (Validator.isEmpty(data.password)) {
     errors.password = "Password field is required";
+  }
+  if (!Validator.matches(data.password, /^[^<>%$\\/";&]*$/)) {
+    errors.password = 'Special characters are not allowed: < > \\ / % $ " ; &';
   }
   return {
     errors,

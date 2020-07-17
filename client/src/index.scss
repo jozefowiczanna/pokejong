@@ -232,3 +232,19 @@ $light: #ffffff;
     color: $dark;
   }
 }
+
+.centeredImage {
+  padding: 5px 20px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    border: 5px solid #c9e3fc;
+    // width: 300px;
+    margin: 10px 0 20px;
+  }
+}
+
+p {
+  font-size: 20px;
+}

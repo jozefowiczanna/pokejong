@@ -14,6 +14,23 @@ class AuthPage extends Component {
     errors: { login: {}, register: {} },
   };
 
+  componentDidMount() {
+    console.log(this.props.userAuthenticated);
+    if (this.props.userAuthenticated) {
+      // window.location.
+      this.props.history.push("/");
+    }
+  }
+  componentDidUpdate() {
+    console.log(this.props.userAuthenticated);
+    if (this.props.userAuthenticated) {
+      // window.location.
+      this.props.history.push("/");
+    }
+  }
+
+  // {userAuthenticated && <Redirect to="/" />}
+
   handleSubmit = (e, path) => {
     e.preventDefault();
     if (this.state.success) {
@@ -49,12 +66,12 @@ class AuthPage extends Component {
         .post("/api/user/login", userData)
         .then((res) => {
           const { token } = res.data;
-          console.log(token);
+          // console.log(token);
 
           localStorage.setItem("jwtToken", token);
           setAuthToken(token);
           const decoded = jwt_decode(token);
-          console.log(decoded, "decoded");
+          // console.log(decoded, "decoded");
           this.props.setCurrentUser(decoded);
           this.props.history.push("/");
         })
@@ -78,10 +95,8 @@ class AuthPage extends Component {
   render() {
     const path = this.props.location.pathname.substr(1);
     const { errors, success } = this.state;
-    const { userAuthenticated } = this.props;
     return (
       <>
-        {userAuthenticated && <Redirect to="/" />}
         <div className="modal is-active">
           <div
             className={cx(
@@ -118,7 +133,9 @@ class AuthPage extends Component {
                           value={this.state.username}
                         />
                       </div>
-                      <p className="help is-danger">{errors[path].username}</p>
+                      <p className="help is-size-6 is-danger">
+                        {errors[path].username}
+                      </p>
                     </div>
                     <div className="field">
                       <label className="label">Password</label>
@@ -131,7 +148,9 @@ class AuthPage extends Component {
                           value={this.state.password}
                         />
                       </div>
-                      <p className="help is-danger">{errors[path].password}</p>
+                      <p className="help is-size-6 is-danger">
+                        {errors[path].password}
+                      </p>
                     </div>
                   </div>
                   <button className="button is-warning mt-5 mb-5">
