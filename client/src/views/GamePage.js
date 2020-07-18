@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import Board from "../components/Board/Board";
 import { shuffle, formatTime } from "../utils/utils";
-import Settings from "../components/Settings/Settings";
-
-const options = {
-  standard: [6, 5],
-  big: [10, 8],
-};
+import {
+  getPossibleMovesNr,
+  setInitialArrays,
+  getAdjacentIdAndSide,
+} from "../utils/gameUtils";
 
 export default class App extends Component {
   state = {
@@ -22,18 +21,15 @@ export default class App extends Component {
       seconds: 0,
       clock: "0:00",
     },
-    settingsOn: true,
     gameStarted: false,
     gameFinished: false,
     possibleMoves: 0,
-    difficulty: "standard",
-    theme: "numbers",
-    randomNumbers: [],
     tilesTotalNr: 0,
+    randomNumbers: [],
   };
 
   componentDidMount() {
-    this.createBoard(options.standard[0], options.standard[1]);
+    this.createBoard(6, 5);
     this.startTimer();
   }
 
@@ -46,27 +42,6 @@ export default class App extends Component {
     // duplicate list - each number must appear twice
     init = [...init, ...init];
     init = shuffle(init);
-
-    const setInitialArrays = (row, col) => {
-      // prepare list of unlocked elements which user can click
-      // those are elements at the beginning and at the end each row
-      let y = 0;
-      const left = [0];
-      const right = [];
-      for (let i = 0; i < row; i++) {
-        y = y + col;
-        right.push(y - 1);
-        if (y === row * col) {
-          continue;
-        }
-        left.push(y);
-      }
-      const sides = {
-        left,
-        right,
-      };
-      return sides;
-    };
 
     const sides = setInitialArrays(rowNr, colNr);
     let board = [];
@@ -100,13 +75,12 @@ export default class App extends Component {
       cols: colNr,
       sides: sides,
       tilesLeft: tilesNr,
-      settingsOn: false,
       gameStarted: true,
     });
 
     // state update delay, had to add setTimeout to prevent infinite loop
     setTimeout(() => {
-      this.checkPossibleMoves(board);
+      this.setPossibleMovesOrShuffle(board);
     }, 50);
   };
 
@@ -138,26 +112,7 @@ export default class App extends Component {
         });
         return;
       }
-      // console.log("same numbers, set both values to null, and empty to true, set activeId to null");
-      // VALUES MUSZĄ ZOSTAĆ!!!
     }
-
-    // Both selected items have matching value and should be removed from board.
-    // Adjacent items should be unlocked for user action.
-    const getAdjacentIdAndSide = (id) => {
-      const Obj = {
-        adjacentId: 0,
-        whichSide: "",
-      };
-      if (sides.left.includes(id)) {
-        Obj.adjacentId = id + 1;
-        Obj.whichSide = "left";
-      } else if (sides.right.includes(id)) {
-        Obj.adjacentId = id - 1;
-        Obj.whichSide = "right";
-      }
-      return Obj;
-    };
 
     // make copy of state items for updates
     let sidesCopy = { ...sides };
@@ -169,7 +124,7 @@ export default class App extends Component {
     // activeId is the index of previously clicked element
     const ids = [currentId, activeId];
     ids.forEach((id) => {
-      const additionalInfo = getAdjacentIdAndSide(id);
+      const additionalInfo = getAdjacentIdAndSide(id, sides);
       sidesCopy[additionalInfo.whichSide].push(additionalInfo.adjacentId); // sides.left or sides.right
       boardCopy[id].empty = true;
       boardCopy[additionalInfo.adjacentId].locked = false;
@@ -194,7 +149,7 @@ export default class App extends Component {
       clearInterval(this.timer);
     } else {
       // check if there are possible moves, otherwise shuffle elements
-      this.checkPossibleMoves(boardCopy);
+      this.setPossibleMovesOrShuffle(boardCopy);
     }
   };
 
@@ -223,7 +178,7 @@ export default class App extends Component {
       activeId: null,
     });
 
-    this.checkPossibleMoves(boardCopy);
+    this.setPossibleMovesOrShuffle(boardCopy);
   };
 
   startTimer = () => {
@@ -244,47 +199,12 @@ export default class App extends Component {
     clearInterval(this.timer);
   };
 
-  checkPossibleMoves = (board) => {
-    const unlockedTiles = {};
-    let possibleMoves = 0;
-    // map through list of active and unlocked elements and check how many times each number appears
-    board.forEach((item) => {
-      if (!item.empty && !item.locked) {
-        if (!unlockedTiles.hasOwnProperty(item.value)) {
-          unlockedTiles[item.value] = 0;
-        }
-        unlockedTiles[item.value] = unlockedTiles[item.value] + 1;
-      }
-    });
-    // same number must appear at least twice to be removed
-    Object.keys(unlockedTiles).map((key) => {
-      if (unlockedTiles[key] > 1) possibleMoves++;
-    });
+  setPossibleMovesOrShuffle = (board) => {
+    const possibleMoves = getPossibleMovesNr(board);
     this.setState({
       possibleMoves: possibleMoves,
     });
     if (!possibleMoves) this.shuffleAll();
-  };
-
-  setDifficulty = (difficulty) => {
-    console.log(difficulty);
-    this.setState({
-      difficulty: difficulty,
-    });
-  };
-
-  setTheme = (theme) => {
-    console.log(theme);
-    this.setState({
-      theme: theme,
-    });
-  };
-
-  startGame = () => {
-    const { difficulty } = this.state;
-
-    this.createBoard(options[difficulty][0], options[difficulty][1]);
-    this.startTimer();
   };
 
   render() {
@@ -296,28 +216,16 @@ export default class App extends Component {
       tilesLeft,
       possibleMoves,
       gameFinished,
-      difficulty,
-      theme,
       tilesTotalNr,
       randomNumbers,
+      gameStarted,
     } = this.state;
-
-    const { test } = this.props;
 
     return (
       <>
         <div className="bodybg"></div>
         <div>
-          {false && (
-            <Settings
-              startGame={this.startGame}
-              setDifficulty={this.setDifficulty}
-              setTheme={this.setTheme}
-              difficulty={difficulty}
-              theme={theme}
-            />
-          )}
-          {test}
+          {/* {!gameStarted && <button className="button">START</button>} */}
           {true && ( // gamestarted &&
             <>
               <div className="clock">

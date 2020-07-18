@@ -7,11 +7,6 @@ import Nav from "./components/Nav/Nav";
 import setAuthToken from "./utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 
-const options = {
-  standard: [6, 5],
-  big: [10, 8],
-};
-
 export default class RootPage extends Component {
   state = {
     test: "test value from App",

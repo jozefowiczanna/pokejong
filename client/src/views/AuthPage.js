@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import styles from "./styles/AuthPage.module.scss";
@@ -14,22 +14,12 @@ class AuthPage extends Component {
     errors: { login: {}, register: {} },
   };
 
-  componentDidMount() {
-    console.log(this.props.userAuthenticated);
-    if (this.props.userAuthenticated) {
-      // window.location.
-      this.props.history.push("/");
-    }
-  }
   componentDidUpdate() {
     console.log(this.props.userAuthenticated);
     if (this.props.userAuthenticated) {
-      // window.location.
       this.props.history.push("/");
     }
   }
-
-  // {userAuthenticated && <Redirect to="/" />}
 
   handleSubmit = (e, path) => {
     e.preventDefault();
@@ -66,12 +56,9 @@ class AuthPage extends Component {
         .post("/api/user/login", userData)
         .then((res) => {
           const { token } = res.data;
-          // console.log(token);
-
           localStorage.setItem("jwtToken", token);
           setAuthToken(token);
           const decoded = jwt_decode(token);
-          // console.log(decoded, "decoded");
           this.props.setCurrentUser(decoded);
           this.props.history.push("/");
         })
