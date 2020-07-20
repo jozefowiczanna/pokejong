@@ -6,6 +6,8 @@ import {
   setInitialArrays,
   getAdjacentIdAndSide,
 } from "../utils/gameUtils";
+import GameStatus from "../components/GameStatus/GameStatus";
+import GameResults from "../components/GameResults/GameResults";
 
 export default class App extends Component {
   state = {
@@ -27,11 +29,6 @@ export default class App extends Component {
     tilesTotalNr: 0,
     randomNumbers: [],
   };
-
-  componentDidMount() {
-    this.createBoard(6, 5);
-    this.startTimer();
-  }
 
   createBoard = (rowNr, colNr) => {
     const tilesNr = rowNr * colNr;
@@ -85,7 +82,7 @@ export default class App extends Component {
   };
 
   handleClick = (currentId) => {
-    const { sides, board, activeId, tilesLeft } = this.state;
+    const { sides, board, activeId, tilesLeft, gameStarted } = this.state;
     if (board[currentId].locked) {
       return;
     }
@@ -127,7 +124,9 @@ export default class App extends Component {
       const additionalInfo = getAdjacentIdAndSide(id, sides);
       sidesCopy[additionalInfo.whichSide].push(additionalInfo.adjacentId); // sides.left or sides.right
       boardCopy[id].empty = true;
-      boardCopy[additionalInfo.adjacentId].locked = false;
+      if (boardCopy[additionalInfo.adjacentId]) {
+        boardCopy[additionalInfo.adjacentId].locked = false;
+      }
     });
 
     const tilesLeftUpt = tilesLeft - 2;
@@ -207,6 +206,14 @@ export default class App extends Component {
     if (!possibleMoves) this.shuffleAll();
   };
 
+  startGame = () => {
+    this.createBoard(6, 5);
+    this.startTimer();
+    this.setState({
+      gameIsLoading: true,
+    });
+  };
+
   render() {
     const {
       board,
@@ -225,45 +232,29 @@ export default class App extends Component {
       <>
         <div className="bodybg"></div>
         <div>
-          {/* {!gameStarted && <button className="button">START</button>} */}
-          {true && ( // gamestarted &&
+          {!gameStarted && (
+            <button className="button" onClick={this.startGame}>
+              START
+            </button>
+          )}
+          {gameStarted && (
             <>
-              <div className="clock">
-                <div className="clock__inner">{time.clock}</div>
-              </div>
-              <div className="game-info">
-                <div>
-                  <div className="game-info__item">
-                    Tiles:{" "}
-                    <span className="game-info__number">{tilesLeft}</span>
-                  </div>
-                  <div className="game-info__item">
-                    Moves:{" "}
-                    <span className="game-info__number">{possibleMoves}</span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Board
-                  board={board}
-                  handleClick={this.handleClick}
-                  cols={cols}
-                  activeId={activeId}
-                  tilesTotalNr={tilesTotalNr}
-                  randomNumbers={randomNumbers}
-                />
-              </div>
+              <GameStatus
+                time={time}
+                tilesLeft={tilesLeft}
+                possibleMoves={possibleMoves}
+              />
+              <Board
+                board={board}
+                handleClick={this.handleClick}
+                cols={cols}
+                activeId={activeId}
+                tilesTotalNr={tilesTotalNr}
+                randomNumbers={randomNumbers}
+              />
             </>
           )}
-          {gameFinished && (
-            <>
-              <div>You won the game!</div>
-              <div>
-                You finished the game in <b>{time.clock}</b>!
-              </div>
-              <div>Play again (pokazuja sie opcje)</div>
-            </>
-          )}
+          {gameFinished && <GameResults time={time} />}
         </div>
       </>
     );
