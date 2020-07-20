@@ -5,6 +5,7 @@ import {
   getPossibleMovesNr,
   setInitialArrays,
   getAdjacentIdAndSide,
+  shuffleAll,
 } from "../utils/gameUtils";
 import GameStatus from "../components/GameStatus/GameStatus";
 import GameResults from "../components/GameResults/GameResults";
@@ -34,7 +35,7 @@ export default class App extends Component {
     const tilesNr = rowNr * colNr;
     const pairs = tilesNr / 2;
 
-    // prepare list of numbers
+    // prepare list of numbers which will be used to map tiles on the board
     let init = Array.from(Array(pairs).keys()).map((x) => ++x);
     // duplicate list - each number must appear twice
     init = [...init, ...init];
@@ -76,13 +77,12 @@ export default class App extends Component {
     });
 
     // state update delay, had to add setTimeout to prevent infinite loop
-    setTimeout(() => {
-      this.setPossibleMovesOrShuffle(board);
-    }, 50);
+    this.setPossibleMovesOrShuffle(board);
+    setTimeout(() => {}, 50);
   };
 
   handleClick = (currentId) => {
-    const { sides, board, activeId, tilesLeft, gameStarted } = this.state;
+    const { sides, board, activeId, tilesLeft } = this.state;
     if (board[currentId].locked) {
       return;
     }
@@ -94,10 +94,10 @@ export default class App extends Component {
       });
       return;
     }
+    // first element has already been selected, compare second element value
     if (activeId !== null) {
-      // first element is selected, compare second element value
       if (activeId === currentId) {
-        // same button was pressed twice, deselect active button
+        // same button was pressed twice, deselect active element
         this.setState({
           activeId: null,
         });
@@ -115,10 +115,8 @@ export default class App extends Component {
     let sidesCopy = { ...sides };
     let boardCopy = board.slice();
 
-    // both selected items have matching value and should be removed from board
-    // Adjacent items should be unlocked for user action
-    // currentId is the index of the last clicked element
-    // activeId is the index of previously clicked element
+    // both selected items have matching value and should be removed from board (set to empty)
+    // tiles next to the elements should be unlocked
     const ids = [currentId, activeId];
     ids.forEach((id) => {
       const additionalInfo = getAdjacentIdAndSide(id, sides);
@@ -147,37 +145,8 @@ export default class App extends Component {
       // stop timer
       clearInterval(this.timer);
     } else {
-      // check if there are possible moves, otherwise shuffle elements
       this.setPossibleMovesOrShuffle(boardCopy);
     }
-  };
-
-  shuffleAll = () => {
-    const { board } = this.state;
-    let arr = [];
-    board.forEach((el) => {
-      if (!el.empty) {
-        arr.push(el.value);
-      }
-    });
-
-    arr = shuffle(arr);
-
-    const boardCopy = board.map((el) => {
-      if (el.empty) {
-        return el;
-      } else {
-        el.value = arr.shift();
-        return el;
-      }
-    });
-
-    this.setState({
-      board: boardCopy,
-      activeId: null,
-    });
-
-    this.setPossibleMovesOrShuffle(boardCopy);
   };
 
   startTimer = () => {
@@ -199,15 +168,27 @@ export default class App extends Component {
   };
 
   setPossibleMovesOrShuffle = (board) => {
+    // check if there are any possible moves, otherwise shuffle elements
     const possibleMoves = getPossibleMovesNr(board);
-    this.setState({
-      possibleMoves: possibleMoves,
-    });
-    if (!possibleMoves) this.shuffleAll();
+    if (possibleMoves) {
+      this.setState({
+        possibleMoves: possibleMoves,
+      });
+      return;
+    }
+    const shuffledBoard = shuffleAll(board);
+    this.setState(
+      {
+        board: shuffledBoard,
+        activeId: null,
+      },
+      // wait for state update, then check again:
+      this.setPossibleMovesOrShuffle(shuffledBoard)
+    );
   };
 
   startGame = () => {
-    this.createBoard(6, 5);
+    this.createBoard(2, 8);
     this.startTimer();
     this.setState({
       gameIsLoading: true,

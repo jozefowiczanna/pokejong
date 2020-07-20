@@ -1,3 +1,5 @@
+import { shuffle } from "./utils";
+
 export const getPossibleMovesNr = (board) => {
   const unlockedTiles = {};
   let possibleMoves = 0;
@@ -18,8 +20,8 @@ export const getPossibleMovesNr = (board) => {
 };
 
 export const setInitialArrays = (row, col) => {
-  // prepare list of unlocked elements which user can click
-  // those are elements at the beginning and at the end each row
+  // prepare list of unlocked elements which user can select
+  // those are elements at the beginning and at the end of each row
   let y = 0;
   const left = [0];
   const right = [];
@@ -53,4 +55,26 @@ export const getAdjacentIdAndSide = (id, sides) => {
     Obj.whichSide = "right";
   }
   return Obj;
+};
+
+export const shuffleAll = (board) => {
+  let arr = [];
+  board.forEach((el) => {
+    if (!el.empty) {
+      arr.push(el.value);
+    }
+  });
+
+  arr = shuffle(arr);
+
+  const shuffledBoard = board.map((el) => {
+    if (el.empty) {
+      return el;
+    } else {
+      el.value = arr.shift();
+      return el;
+    }
+  });
+
+  return shuffledBoard;
 };
