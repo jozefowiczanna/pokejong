@@ -102,15 +102,19 @@ export default class Board extends Component {
   }
 
   updateLoadingStatus = (total) => {
+    console.log("upload?");
     const nr = this.state.loadedImagesNr + 1;
     this.setState({
       loadedImagesNr: nr,
     });
     if (nr === total) {
       console.log("all");
-      this.setState({
-        allImagesLoaded: true,
-      });
+      this.setState(
+        {
+          allImagesLoaded: true,
+        },
+        this.props.startTimer
+      );
     }
   };
 
@@ -127,46 +131,50 @@ export default class Board extends Component {
     const { updateLoadingStatus } = this;
 
     return (
-      <div className="flex">
-        <div className="board">
-          <StyledGrid cols={cols} visible={allImagesLoaded}>
-            {board.map((el, index) => {
-              const url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-                randomNumbers[el.value]
-              }.png`;
+      <>
+        {true && (
+          <div className="flex">
+            <div className="board">
+              <StyledGrid cols={cols} visible={allImagesLoaded}>
+                {board.map((el, index) => {
+                  const url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                    randomNumbers[el.value]
+                  }.png`;
 
-              return (
-                <StyledButton
-                  img={url}
-                  locked={el.locked}
-                  index={index}
-                  activeId={activeId}
-                  empty={el.empty}
-                  onClick={() => handleClick(index)}
-                  key={index}
-                >
-                  <StyledImg
-                    src={url}
-                    alt=""
-                    onLoad={() => updateLoadingStatus(tilesTotalNr)}
+                  return (
+                    <StyledButton
+                      img={url}
+                      locked={el.locked}
+                      index={index}
+                      activeId={activeId}
+                      empty={el.empty}
+                      onClick={() => handleClick(index)}
+                      key={index}
+                    >
+                      <StyledImg
+                        src={url}
+                        alt=""
+                        onLoad={() => updateLoadingStatus(tilesTotalNr)}
+                      />
+                    </StyledButton>
+                  );
+                })}
+              </StyledGrid>
+              <StyledProgressBarWrapper visible={!allImagesLoaded}>
+                <StyledProgressNr>Loading images...</StyledProgressNr>
+                <StyledOuterProgressBar>
+                  <StyledInnerProgressBar
+                    scaleX={`scaleX(${loadedImagesNr / tilesTotalNr})`}
                   />
-                </StyledButton>
-              );
-            })}
-          </StyledGrid>
-          <StyledProgressBarWrapper visible={!allImagesLoaded}>
-            <StyledProgressNr>Loading images...</StyledProgressNr>
-            <StyledOuterProgressBar>
-              <StyledInnerProgressBar
-                scaleX={`scaleX(${loadedImagesNr / tilesTotalNr})`}
-              />
-            </StyledOuterProgressBar>
-            <StyledProgressNr>
-              {Math.floor((loadedImagesNr / tilesTotalNr) * 100) + "%"}
-            </StyledProgressNr>
-          </StyledProgressBarWrapper>
-        </div>
-      </div>
+                </StyledOuterProgressBar>
+                <StyledProgressNr>
+                  {Math.floor((loadedImagesNr / tilesTotalNr) * 100) + "%"}
+                </StyledProgressNr>
+              </StyledProgressBarWrapper>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 }

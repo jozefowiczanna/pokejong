@@ -1,10 +1,19 @@
 import React from "react";
 
-export default function GameStatus({ time, tilesLeft, possibleMoves }) {
+export default function GameStatus({
+  time,
+  tilesLeft,
+  possibleMoves,
+  pauseGame,
+}) {
   return (
     <>
       <div className="clock">
-        <div className="clock__inner">{time.clock}</div>
+        <div className="clock__inner">
+          <button className="button--timer" onClick={pauseGame}>
+            {time.clock}
+          </button>
+        </div>
       </div>
       <div className="game-info">
         <div>

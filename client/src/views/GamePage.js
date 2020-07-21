@@ -7,8 +7,13 @@ import {
   getAdjacentIdAndSide,
   shuffleAll,
 } from "../utils/gameUtils";
+import jwt_decode from "jwt-decode";
 import GameStatus from "../components/GameStatus/GameStatus";
 import GameResults from "../components/GameResults/GameResults";
+import PauseModal from "../components/PauseModal/PauseModal";
+import guestID from "../data/guestID";
+
+const defaultBoardSize = [2, 2];
 
 export default class App extends Component {
   state = {
@@ -25,10 +30,12 @@ export default class App extends Component {
       clock: "0:00",
     },
     gameStarted: false,
+    gamePaused: false,
     gameFinished: false,
     possibleMoves: 0,
     tilesTotalNr: 0,
     randomNumbers: [],
+    userAgent: "",
   };
 
   createBoard = (rowNr, colNr) => {
@@ -74,14 +81,14 @@ export default class App extends Component {
       sides: sides,
       tilesLeft: tilesNr,
       gameStarted: true,
+      gameFinished: false,
     });
 
-    // state update delay, had to add setTimeout to prevent infinite loop
     this.setPossibleMovesOrShuffle(board);
-    setTimeout(() => {}, 50);
   };
 
   handleClick = (currentId) => {
+    this.addScoreToDatabase();
     const { sides, board, activeId, tilesLeft } = this.state;
     if (board[currentId].locked) {
       return;
@@ -142,14 +149,17 @@ export default class App extends Component {
         gameStarted: false,
         gameFinished: true,
       });
-      // stop timer
-      clearInterval(this.timer);
+      this.stopTimer();
+
+      // add result to database
+      // if (u)
     } else {
       this.setPossibleMovesOrShuffle(boardCopy);
     }
   };
 
   startTimer = () => {
+    // trigger this function only after all images have been loaded
     this.timer = setInterval(() => {
       const seconds = this.state.time.seconds + 1;
       const clock = formatTime(seconds);
@@ -187,12 +197,51 @@ export default class App extends Component {
     );
   };
 
-  startGame = () => {
-    this.createBoard(2, 8);
+  pauseGame = () => {
+    this.stopTimer();
+    this.setState({
+      gamePaused: true,
+    });
+  };
+
+  resumeGame = () => {
     this.startTimer();
     this.setState({
-      gameIsLoading: true,
+      gamePaused: false,
     });
+  };
+
+  startGame = () => {
+    // used both for start and restart game
+    // reset values, then start
+    const time = {
+      seconds: 0,
+      clock: "0:00",
+    };
+    this.setState(
+      {
+        time,
+        gamePaused: false,
+        gameStarted: false,
+      },
+      () => {
+        this.createBoard(defaultBoardSize[0], defaultBoardSize[1]);
+      }
+    );
+  };
+
+  addScoreToDatabase = () => {
+    let payload = {
+      seconds: this.state.time.seconds,
+    };
+    if (!this.props.userAuthenticated && !localStorage.jwtToken) {
+      // if user is not logged in, save as guest score
+      payload.userID = guestID;
+    } else {
+      // logged in user ID
+      payload.userID = jwt_decode(localStorage.jwtToken).userID;
+    }
+    console.log(payload);
   };
 
   render() {
@@ -207,16 +256,40 @@ export default class App extends Component {
       tilesTotalNr,
       randomNumbers,
       gameStarted,
+      gamePaused,
     } = this.state;
+
+    const { startGame, pauseGame, resumeGame } = this;
+
+    const { userAuthenticated } = this.props;
 
     return (
       <>
         <div className="bodybg"></div>
         <div>
-          {!gameStarted && (
-            <button className="button" onClick={this.startGame}>
-              START
-            </button>
+          {!gameStarted && !gameFinished && (
+            <div className="container">
+              <div className="content">
+                <div className="flex-centered">
+                  <h2 className="title is-3 has-text-centered mt-5">
+                    Play the game!
+                  </h2>
+                  <p className="has-text-centered">
+                    Find pairs among unlocked tiles.
+                  </p>
+                  <p className="has-text-centered">
+                    Click timer to pause the game.
+                  </p>
+                  <p className="has-text-centered">Have fun!</p>
+                  <button
+                    className="button is-link self-centered button--timer"
+                    onClick={startGame}
+                  >
+                    PLAY
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
           {gameStarted && (
             <>
@@ -224,6 +297,7 @@ export default class App extends Component {
                 time={time}
                 tilesLeft={tilesLeft}
                 possibleMoves={possibleMoves}
+                pauseGame={pauseGame}
               />
               <Board
                 board={board}
@@ -232,11 +306,27 @@ export default class App extends Component {
                 activeId={activeId}
                 tilesTotalNr={tilesTotalNr}
                 randomNumbers={randomNumbers}
+                startTimer={this.startTimer}
+                gameStarted={gameStarted}
               />
             </>
           )}
-          {gameFinished && <GameResults time={time} />}
+          {gameFinished && (
+            <GameResults
+              time={time}
+              startGame={startGame}
+              userAuthenticated={userAuthenticated}
+            />
+          )}
+          <p>{this.state.userAgent}</p>
         </div>
+        {gamePaused && (
+          <PauseModal
+            resumeGame={resumeGame}
+            startGame={startGame}
+            resumeGame={resumeGame}
+          />
+        )}
       </>
     );
   }

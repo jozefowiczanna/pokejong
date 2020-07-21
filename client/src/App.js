@@ -20,8 +20,6 @@ export default class RootPage extends Component {
       const token = localStorage.jwtToken;
       setAuthToken(token);
       const decoded = jwt_decode(token);
-      console.log("decoded token");
-      console.log(decoded);
       this.setCurrentUser(decoded);
       this.setState({
         userAuthenticated: true,
@@ -96,6 +94,10 @@ export default class RootPage extends Component {
       setCurrentUser,
     };
 
+    const gamePageProps = {
+      userAuthenticated,
+    };
+
     return (
       <Router>
         <Nav {...navProps} />
@@ -118,7 +120,7 @@ export default class RootPage extends Component {
           <Route
             exact
             path="/game"
-            render={(props) => <GamePage {...props} />}
+            render={(props) => <GamePage {...props} {...gamePageProps} />}
           />
         </Switch>
       </Router>
