@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import Board from "../components/Board/Board";
 import { shuffle, formatTime } from "../utils/utils";
 import {
@@ -13,7 +14,7 @@ import GameResults from "../components/GameResults/GameResults";
 import PauseModal from "../components/PauseModal/PauseModal";
 import guestID from "../data/guestID";
 
-const defaultBoardSize = [2, 2];
+const defaultBoardSize = [6, 5];
 
 export default class App extends Component {
   state = {
@@ -35,7 +36,7 @@ export default class App extends Component {
     possibleMoves: 0,
     tilesTotalNr: 0,
     randomNumbers: [],
-    userAgent: "",
+    dbStatus: "pending",
   };
 
   createBoard = (rowNr, colNr) => {
@@ -88,7 +89,6 @@ export default class App extends Component {
   };
 
   handleClick = (currentId) => {
-    this.addScoreToDatabase();
     const { sides, board, activeId, tilesLeft } = this.state;
     if (board[currentId].locked) {
       return;
@@ -151,8 +151,9 @@ export default class App extends Component {
       });
       this.stopTimer();
 
+      // TODO add account page before updating
       // add result to database
-      // if (u)
+      // this.addScoreToDatabase();
     } else {
       this.setPossibleMovesOrShuffle(boardCopy);
     }
@@ -241,7 +242,17 @@ export default class App extends Component {
       // logged in user ID
       payload.userID = jwt_decode(localStorage.jwtToken).userID;
     }
-    console.log(payload);
+    axios
+      .post("/api/game/score", payload)
+      .then((score) => {
+        console.log(score.data);
+        this.setState({ dbStatus: "success" });
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response);
+        this.setState({ dbStatus: "error" });
+      });
   };
 
   render() {
@@ -257,6 +268,7 @@ export default class App extends Component {
       randomNumbers,
       gameStarted,
       gamePaused,
+      dbStatus,
     } = this.state;
 
     const { startGame, pauseGame, resumeGame } = this;
@@ -316,6 +328,7 @@ export default class App extends Component {
               time={time}
               startGame={startGame}
               userAuthenticated={userAuthenticated}
+              dbStatus={dbStatus}
             />
           )}
           <p>{this.state.userAgent}</p>
