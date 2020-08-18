@@ -91,7 +91,6 @@ export default class Board extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.tilesTotalNr);
     // generate list of random numbers between 1 and 300
     // it will be used to load random images
     let numbers = Array.from(Array(300).keys()).map((x) => ++x);
@@ -102,13 +101,11 @@ export default class Board extends Component {
   }
 
   updateLoadingStatus = (total) => {
-    console.log("upload?");
     const nr = this.state.loadedImagesNr + 1;
     this.setState({
       loadedImagesNr: nr,
     });
     if (nr === total) {
-      console.log("all");
       this.setState(
         {
           allImagesLoaded: true,

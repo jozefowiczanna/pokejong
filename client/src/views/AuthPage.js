@@ -15,7 +15,6 @@ class AuthPage extends Component {
   };
 
   componentDidUpdate() {
-    console.log(this.props.userAuthenticated);
     if (this.props.userAuthenticated) {
       this.props.history.push("/");
     }
@@ -29,9 +28,14 @@ class AuthPage extends Component {
         errors: { login: {}, register: {} },
       });
     }
+    let userAgent = "";
+    if (navigator.userAgent) {
+      userAgent = navigator.userAgent.replace(/(\/)|(;)/g, "-");
+    }
     const userData = {
       username: this.state.username,
       password: this.state.password,
+      userAgent,
     };
     if (path === "register") {
       axios
@@ -60,6 +64,8 @@ class AuthPage extends Component {
           setAuthToken(token);
           const decoded = jwt_decode(token);
           this.props.setCurrentUser(decoded);
+          this.props.getAllScores();
+          this.props.getUserScores(decoded.userID);
           this.props.history.push("/");
         })
         .catch((err) => {
@@ -68,7 +74,6 @@ class AuthPage extends Component {
               errors: { register: {}, login: err.response.data },
             });
           }
-          console.log(err.response);
         });
     }
   };
@@ -95,50 +100,48 @@ class AuthPage extends Component {
             <div className={cx(styles["box-outer"])}>
               <div className={cx("box", styles["box-centered"])}>
                 <h2 className="title is-4 has-text-centered">
-                  {path === "register" ? "Register" : "Login"}
+                  {path === "register" ? "Register" : "Log in"}
                 </h2>
                 <form
                   className={cx(styles["form"])}
                   onSubmit={(e) => this.handleSubmit(e, path)}
                 >
-                  <div>
-                    {success && (
-                      <div className="registered-anim notification is-success has-text-centered">
-                        You have successfully registered!
-                        <br />
-                        You can log in!
-                      </div>
-                    )}
-                    <div className="field">
-                      <label className="label">Username</label>
-                      <div className="control">
-                        <input
-                          className="input"
-                          type="text"
-                          onChange={this.handleChange}
-                          name="username"
-                          value={this.state.username}
-                        />
-                      </div>
-                      <p className="help is-size-6 is-danger">
-                        {errors[path].username}
-                      </p>
+                  {success && path === "login" && (
+                    <div className="registered-anim notification is-success has-text-centered">
+                      You have successfully registered!
+                      <br />
+                      You can log in!
                     </div>
-                    <div className="field">
-                      <label className="label">Password</label>
-                      <div className="control">
-                        <input
-                          className="input"
-                          type="password"
-                          onChange={this.handleChange}
-                          name="password"
-                          value={this.state.password}
-                        />
-                      </div>
-                      <p className="help is-size-6 is-danger">
-                        {errors[path].password}
-                      </p>
+                  )}
+                  <div className={cx("field", styles["field--custom"])}>
+                    <label className="label">Username</label>
+                    <div className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        onChange={this.handleChange}
+                        name="username"
+                        value={this.state.username}
+                      />
                     </div>
+                    <p className="help is-size-6 is-danger">
+                      {errors[path].username}
+                    </p>
+                  </div>
+                  <div className={cx("field", styles["field--custom"])}>
+                    <label className="label">Password</label>
+                    <div className="control">
+                      <input
+                        className="input"
+                        type="password"
+                        onChange={this.handleChange}
+                        name="password"
+                        value={this.state.password}
+                      />
+                    </div>
+                    <p className="help is-size-6 is-danger">
+                      {errors[path].password}
+                    </p>
                   </div>
                   <button className="button is-warning mt-5 mb-5">
                     {path === "register" ? "Sign up" : "Sign in"}

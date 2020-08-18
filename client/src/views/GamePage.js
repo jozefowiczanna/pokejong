@@ -83,6 +83,7 @@ export default class App extends Component {
       tilesLeft: tilesNr,
       gameStarted: true,
       gameFinished: false,
+      dbStatus: "pending",
     });
 
     this.setPossibleMovesOrShuffle(board);
@@ -151,9 +152,8 @@ export default class App extends Component {
       });
       this.stopTimer();
 
-      // TODO add account page before updating
       // add result to database
-      // this.addScoreToDatabase();
+      this.addScoreToDatabase();
     } else {
       this.setPossibleMovesOrShuffle(boardCopy);
     }
@@ -213,8 +213,6 @@ export default class App extends Component {
   };
 
   startGame = () => {
-    // used both for start and restart game
-    // reset values, then start
     const time = {
       seconds: 0,
       clock: "0:00",
@@ -234,23 +232,27 @@ export default class App extends Component {
   addScoreToDatabase = () => {
     let payload = {
       seconds: this.state.time.seconds,
+      rows: defaultBoardSize[0],
+      cols: defaultBoardSize[1],
     };
+    let tokenID = "";
     if (!this.props.userAuthenticated && !localStorage.jwtToken) {
       // if user is not logged in, save as guest score
       payload.userID = guestID;
     } else {
       // logged in user ID
-      payload.userID = jwt_decode(localStorage.jwtToken).userID;
+      tokenID = jwt_decode(localStorage.jwtToken).userID;
+      payload.userID = tokenID;
     }
     axios
       .post("/api/game/score", payload)
-      .then((score) => {
-        console.log(score.data);
+      .then(() => {
         this.setState({ dbStatus: "success" });
+        if (this.props.userAuthenticated) {
+          this.props.getUserScores(tokenID);
+        }
       })
-      .catch((err) => {
-        console.log(err);
-        console.log(err.response);
+      .catch(() => {
         this.setState({ dbStatus: "error" });
       });
   };

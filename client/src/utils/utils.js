@@ -1,10 +1,21 @@
 export const shuffle = (a) => {
   for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
+};
+
+export const sortArray = (arr, property, order = "asc") => {
+  const newArr = arr.slice();
+  if (order === "asc") {
+    newArr.sort((a, b) => (a[property] > b[property] ? 1 : -1));
+  }
+  if (order === "desc") {
+    newArr.sort((a, b) => (a[property] > b[property] ? -1 : 1));
+  }
+  return newArr;
+};
 
 export const formatTime = (seconds) => {
   let min = 0;
@@ -15,6 +26,6 @@ export const formatTime = (seconds) => {
   } else {
     sec = seconds;
   }
-  sec = (sec > 9) ? sec : "0" + sec;
+  sec = sec > 9 ? sec : "0" + sec;
   return `${min}:${sec}`;
-}
+};

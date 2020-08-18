@@ -12,9 +12,19 @@ const ScoreSchema = new Schema(
       type: Number,
       required: true,
     },
-  },
-  {
-    timestamps: true,
+    rows: {
+      type: Number,
+      required: true,
+    },
+    cols: {
+      type: Number,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: new Date(),
+      required: true,
+    },
   }
 );
 

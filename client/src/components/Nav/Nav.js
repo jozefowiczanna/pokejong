@@ -10,6 +10,39 @@ export default function Nav({
   userAuthenticated,
   logoutUser,
 }) {
+  const authLinks = userAuthenticated ? (
+    <li className={styles.navigationItem} onClick={closeNav}>
+      <Link className={styles.navigationLink} to="/account">
+        Account
+      </Link>
+    </li>
+  ) : (
+    <>
+      <li className={styles.navigationItem} onClick={closeNav}>
+        <Link className={styles.navigationLink} to="/login">
+          Log in
+        </Link>
+      </li>
+      <li className={styles.navigationItem} onClick={closeNav}>
+        <Link className={styles.navigationLink} to="/register">
+          Register
+        </Link>
+      </li>
+    </>
+  );
+
+  const logoutLink = userAuthenticated ? (
+    <li
+      className={styles.navigationItem}
+      onClick={(e) => {
+        closeNav();
+        logoutUser();
+      }}
+    >
+      <button className={styles.navigationLinkBtn}>Log out</button>
+    </li>
+  ) : null;
+
   return (
     <div>
       <button
@@ -30,47 +63,25 @@ export default function Nav({
         >
           <ul className={styles.navigationList}>
             <li className={styles.navigationItem} onClick={closeNav}>
+              <Link
+                className={cx(styles.navigationLink, styles.navigationLinkBold)}
+                to="/game"
+              >
+                Play
+              </Link>
+            </li>
+            <li className={styles.navigationItem} onClick={closeNav}>
               <Link className={styles.navigationLink} to="/">
                 Home
               </Link>
             </li>
-            {userAuthenticated ? (
-              <>
-                <li className={styles.navigationItem} onClick={closeNav}>
-                  <Link className={styles.navigationLink} to="/account">
-                    Account
-                  </Link>
-                </li>
-                <li
-                  className={styles.navigationItem}
-                  onClick={(e) => {
-                    closeNav();
-                    logoutUser();
-                  }}
-                >
-                  <button className={styles.navigationLinkBtn}>Logout</button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className={styles.navigationItem} onClick={closeNav}>
-                  <Link className={styles.navigationLink} to="/login">
-                    Login
-                  </Link>
-                </li>
-                <li className={styles.navigationItem} onClick={closeNav}>
-                  <Link className={styles.navigationLink} to="/register">
-                    Register
-                  </Link>
-                </li>
-              </>
-            )}
-
+            {authLinks}
             <li className={styles.navigationItem} onClick={closeNav}>
-              <Link className={styles.navigationLink} to="/game">
-                Play
+              <Link className={styles.navigationLink} to="/scores">
+                Top Scores
               </Link>
             </li>
+            {logoutLink}
           </ul>
         </div>
       </div>
